@@ -16,11 +16,10 @@ public class Employee {
     private String lastName;
     private String idNumber;
     private String address;
-
-    private LocalDate joiningDate;  // Menggunakan LocalDate untuk tanggal bergabung
+    private LocalDate joiningDate;
 
     private boolean isForeigner;
-    private Gender gender;  // Menggunakan enum Gender
+    private Gender gender;
 
     private int monthlySalary;
     private int otherMonthlyIncome;
@@ -29,8 +28,7 @@ public class Employee {
     private String spouseName;
     private String spouseIdNumber;
 
-    private List<String> childNames;
-    private List<String> childIdNumbers;
+    private List<Child> children; 
 
     // Konstruktor
     public Employee(String employeeId, String firstName, String lastName, String idNumber, String address,
@@ -44,8 +42,7 @@ public class Employee {
         this.isForeigner = isForeigner;
         this.gender = gender;
 
-        childNames = new LinkedList<>();
-        childIdNumbers = new LinkedList<>();
+        this.children = new LinkedList<>(); 
     }
 
 	/**
@@ -82,33 +79,33 @@ public class Employee {
 		 }
 	 }
  
-	 public void setAnnualDeductible(int deductible) {
-		 this.annualDeductible = deductible;
-	 }
- 
-	 public void setAdditionalIncome(int income) {
-		 this.otherMonthlyIncome = income;
-	 }
- 
-	 public void setSpouse(String spouseName, String spouseIdNumber) {
-		 this.spouseName = spouseName;
-		 this.spouseIdNumber = spouseIdNumber;  // Perbaikan: menggunakan parameter dengan benar
-	 }
- 
-	 public void addChild(String childName, String childIdNumber) {
-		 childNames.add(childName);
-		 childIdNumbers.add(childIdNumber);
-	 }
- 
-	 public int getAnnualIncomeTax() {
+	public void setAnnualDeductible(int deductible) {
+        this.annualDeductible = deductible;
+    }
+
+    public void setAdditionalIncome(int income) {
+        this.otherMonthlyIncome = income;
+    }
+
+    public void setSpouse(String spouseName, String spouseIdNumber) {
+        this.spouseName = spouseName;
+        this.spouseIdNumber = spouseIdNumber;
+    }
+
+    public void addChild(String childName, String childIdNumber) {
+        this.children.add(new Child(childName, childIdNumber)); // Menambahkan child ke list
+    }
+
+    public int getAnnualIncomeTax() {
         LocalDate now = LocalDate.now();
         int monthsWorked = (now.getYear() == joiningDate.getYear())
                 ? (now.getMonthValue() - joiningDate.getMonthValue())
                 : 12;
 
+        // Menyiapkan Family yang berisi status pernikahan dan jumlah anak
         Family family = new Family(
                 spouseIdNumber.isEmpty() ? MaritalStatus.SINGLE : MaritalStatus.MARRIED,
-                childIdNumbers.size()
+                children
         );
 
         return TaxFunction.calculateTax(
@@ -119,4 +116,5 @@ public class Employee {
                 family
         );
     }
+
 }
