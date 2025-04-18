@@ -40,7 +40,7 @@ public class Employee {
         this.lastName = lastName;
         this.idNumber = idNumber;
         this.address = address;
-        this.joiningDate = joiningDate;  // Menyimpan tanggal bergabung dalam satu objek
+        this.joiningDate = joiningDate;
         this.isForeigner = isForeigner;
         this.gender = gender;
 
@@ -101,13 +101,22 @@ public class Employee {
 	 }
  
 	 public int getAnnualIncomeTax() {
-		 // Menghitung berapa lama pegawai bekerja dalam setahun ini, jika pegawai sudah
-		 // bekerja dari tahun sebelumnya maka otomatis dianggap 12 bulan.
-		 LocalDate date = LocalDate.now();
-		 int monthsWorked = (date.getYear() == joiningDate.getYear()) ?
-				 (date.getMonthValue() - joiningDate.getMonthValue()) : 12;
- 
-		 return TaxFunction.calculateTax(monthlySalary, otherMonthlyIncome, monthsWorked, annualDeductible,
-				 spouseIdNumber.equals(""), childIdNumbers.size());
-	 }
+        LocalDate now = LocalDate.now();
+        int monthsWorked = (now.getYear() == joiningDate.getYear())
+                ? (now.getMonthValue() - joiningDate.getMonthValue())
+                : 12;
+
+        Family family = new Family(
+                spouseIdNumber.isEmpty() ? MaritalStatus.SINGLE : MaritalStatus.MARRIED,
+                childIdNumbers.size()
+        );
+
+        return TaxFunction.calculateTax(
+                monthlySalary,
+                otherMonthlyIncome,
+                monthsWorked,
+                annualDeductible,
+                family
+        );
+    }
 }
