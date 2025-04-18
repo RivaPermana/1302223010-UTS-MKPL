@@ -15,27 +15,30 @@ public class TaxFunction {
 	 */
 	
 	
-	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
-		
-		int tax = 0;
-		
+	 public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
 		if (numberOfMonthWorking > 12) {
 			System.err.println("More than 12 month working per year");
 		}
-		
-		if (numberOfChildren > 3) {
-			numberOfChildren = 3;
-		}
-		
+	
+		numberOfChildren = adjustChildrenCount(numberOfChildren);
 		int nonTaxableIncome = calculateNonTaxableIncome(isMarried, numberOfChildren);
-
-        int yearlyIncome = (monthlySalary + otherMonthlyIncome) * numberOfMonthWorking;
-        int taxableIncome = yearlyIncome - deductible - nonTaxableIncome;
-
-        tax = (int) Math.round(0.05 * taxableIncome);
-
-        return Math.max(tax, 0);
-    }
+		int taxableIncome = calculateTaxableIncome(monthlySalary, otherMonthlyIncome, numberOfMonthWorking, deductible, nonTaxableIncome);
+		
+		return calculateFinalTax(taxableIncome);
+	}
+	
+	private static int adjustChildrenCount(int numberOfChildren) {
+		return Math.min(numberOfChildren, 3);
+	}
+	
+	private static int calculateTaxableIncome(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, int nonTaxableIncome) {
+		int yearlyIncome = (monthlySalary + otherMonthlyIncome) * numberOfMonthWorking;
+		return yearlyIncome - deductible - nonTaxableIncome;
+	}
+	
+	private static int calculateFinalTax(int taxableIncome) {
+		return (int) Math.round(0.05 * taxableIncome);
+	}
 
     private static int calculateNonTaxableIncome(boolean isMarried, int numberOfChildren) {
         final int BASE = 54000000;
