@@ -15,42 +15,32 @@ public class TaxFunction {
 	 */
 	
 	
-	 public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
-		if (numberOfMonthWorking > 12) {
-			System.err.println("More than 12 month working per year");
-		}
-	
-		numberOfChildren = adjustChildrenCount(numberOfChildren);
-		int nonTaxableIncome = calculateNonTaxableIncome(isMarried, numberOfChildren);
-		int taxableIncome = calculateTaxableIncome(monthlySalary, otherMonthlyIncome, numberOfMonthWorking, deductible, nonTaxableIncome);
-		
-		return calculateFinalTax(taxableIncome);
-	}
-	
-	private static int adjustChildrenCount(int numberOfChildren) {
-		return Math.min(numberOfChildren, 3);
-	}
-	
-	private static int calculateTaxableIncome(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, int nonTaxableIncome) {
-		int yearlyIncome = (monthlySalary + otherMonthlyIncome) * numberOfMonthWorking;
-		return yearlyIncome - deductible - nonTaxableIncome;
-	}
-	
-	private static int calculateFinalTax(int taxableIncome) {
-		return (int) Math.round(0.05 * taxableIncome);
-	}
+	private static final int NON_TAXABLE_BASE = 54000000;
+    private static final int NON_TAXABLE_MARRIED = 4500000;
+    private static final int NON_TAXABLE_PER_CHILD = 1500000;
 
-    private static int calculateNonTaxableIncome(boolean isMarried, int numberOfChildren) {
-        final int BASE = 54000000;
-        final int MARRIED = 4500000;
-        final int HAVE_CHILD = 1500000;
-
-        int nonTaxableIncome = BASE;
-        if (isMarried) {
-            nonTaxableIncome += MARRIED + (numberOfChildren * HAVE_CHILD);
+    public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int monthsWorked, int deductible, Family family) {
+        if (monthsWorked > 12) {
+            System.err.println("Jumlah bulan bekerja tidak boleh lebih dari 12");
         }
 
-        return nonTaxableIncome;
+        int yearlyIncome = (monthlySalary + otherMonthlyIncome) * monthsWorked;
+        int nonTaxableIncome = calculateNonTaxableIncome(family);
+        int taxableIncome = yearlyIncome - deductible - nonTaxableIncome;
+
+        return calculateFinalTax(taxableIncome);
+    }
+
+    private static int calculateNonTaxableIncome(Family family) {
+        int income = NON_TAXABLE_BASE;
+        if (family.isMarried()) {
+            income += NON_TAXABLE_MARRIED + (family.getNumberOfChildren() * NON_TAXABLE_PER_CHILD);
+        }
+        return income;
+    }
+
+    private static int calculateFinalTax(int taxableIncome) {
+        return (int) Math.round(0.05 * taxableIncome);
     }
 	
 }
