@@ -1,20 +1,27 @@
 package lib;
 
-public class Family {
-    private final MaritalStatus maritalStatus;
-    private final int numberOfChildren;
+import java.util.List;
 
-    public Family(MaritalStatus maritalStatus, int numberOfChildren) {
+public class Family {
+
+    private MaritalStatus maritalStatus;
+    private List<Child> children;
+
+    public Family(MaritalStatus maritalStatus, List<Child> children) {
         this.maritalStatus = maritalStatus;
-        this.numberOfChildren = Math.min(numberOfChildren, 3); // max 3 anak sesuai ketentuan pajak
+        this.children = children;
     }
 
     public MaritalStatus getMaritalStatus() {
         return maritalStatus;
     }
 
+    public List<Child> getChildren() {
+        return children;
+    }
+
     public int getNumberOfChildren() {
-        return numberOfChildren;
+        return children.size();
     }
 
     public boolean isMarried() {
